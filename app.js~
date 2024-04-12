@@ -1,0 +1,134 @@
+$(function(){
+    init();
+
+    $("button").click(generate);
+    $("#out>span").hover(function(){
+        getExamples($(this).text(),$(this).attr("id"),Data.options.maxExamples);
+    });
+    $("#out>span").click(function(){
+        getExamples($(this).text(),$(this).attr("id"),Data.options.maxExamples);
+    });
+})
+let getExamples = function(txt,pos,quantity){
+        // let txt = $(this).text();
+        if(lastHover==txt) return;
+        lastHover = txt;
+        let pref = "";
+        let prefend="";
+        if(pos=="prefix") {
+
+            pref="^"; 
+        } else if(pos=="genre"){
+            pref="="; 
+        } else if(pos=="suffix"){
+            pref=""; 
+            prefend="$";
+        }
+        let query = pref+txt.trim().toLowerCase()+prefend;
+        // let query = pref+"\""+txt.trim().toLowerCase()+"\""+prefend;
+        console.log("query",query);
+        let res = fuse.search(query);
+        console.log(res.slice(0,Data.options.maxExamples));
+        // console.log(output);
+        // return output;
+        let output = []
+        for(let i=0;i<(res.length>=Data.options.maxExamples?Data.options.maxExamples:res.length);i++){
+            output.push(Data.examples[res[i].item])
+        }
+        console.log(output.join("\n"));
+        return output;
+}
+let lastHover = "";
+let Data = {
+    prefix:[],
+    suffix:[],
+    genre:[],
+    examples:[],
+    ready:-4,
+    options:{
+        alwaysCapitalize:false,
+        maxExamples:10
+    }
+};
+let getFileAsArray = function(filename,mode=0){
+    $.ajax({
+        url : filename+".txt",
+        dataType: "text",
+        success : function (data) {
+            // console.log(data);
+            if(mode==1){
+                Data[filename] = JSON.parse(data);
+            }else{
+                Data[filename] = data.split("\r\n");
+            }
+            Data.ready++;
+            if(Data.ready==0){
+                enableSearch();
+                generate();
+            }
+        }
+    });
+}
+
+let getRandom = function(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+}
+let capitalize = function(str){
+    str = str[0].toUpperCase()+str.substring(1);
+    return str;
+}
+
+let init = function(){
+    getFileAsArray("examples",1);
+    getFileAsArray("genre");
+    getFileAsArray("prefix");
+    getFileAsArray("suffix");
+}
+let sortOpt = {
+    includeScore: true,
+    useExtendedSearch: true,
+    // threshold:0.49
+}
+let fuse;
+let enableSearch = function(){
+    fuse = new Fuse(Data.examples, sortOpt);
+}
+let generate = function(){
+    console.log("generate");
+    let prefix = getRandom(Data.prefix);
+    let genre = getRandom(Data.genre);
+    let suffix = getRandom(Data.suffix);
+    console.log("genereated:",prefix,genre,suffix)
+
+    let prefixDiv = prefix.slice(-2).split("");
+    console.log("pre:",prefixDiv)
+    if(prefixDiv[0]=="."||prefixDiv[0]=="_"){
+        prefix = prefix.substring(0,prefix.length-2);
+    }else{
+        prefix = prefix.substring(0,prefix.length-1);
+        prefixDiv.shift()
+    }
+    console.log("pre:",prefixDiv)
+    prefixDiv = getRandom(prefixDiv);
+    prefixDiv = (prefixDiv=="_"?" ":"");
+    if(prefixDiv==" "||Data.options.alwaysCapitalize) genre = capitalize(genre);
+
+    let suffixDiv = suffix.slice(0,2).split("");
+    console.log("suf:",suffixDiv)
+    if(suffixDiv[1]=="."||suffixDiv[1]=="_"){
+        suffix = suffix.substring(2);
+    }else{
+        suffix = suffix.substring(1);
+        suffixDiv.pop()
+    }
+    console.log("suf:",suffixDiv)
+    suffixDiv = getRandom(suffixDiv);
+    suffixDiv = (suffixDiv=="_"?" ":"");
+    if(suffixDiv==" "||Data.options.alwaysCapitalize) suffix = capitalize(suffix);
+    $("#prefix").text(prefix+prefixDiv);
+    $("#genre").text(genre);
+    $("#suffix").text(suffixDiv+suffix);
+    let string = prefix+prefixDiv+genre+suffixDiv+suffix;
+    // $("#out").text(string);
+    console.log(string)
+}

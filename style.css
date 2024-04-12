@@ -1,0 +1,78 @@
+#theme1{
+    --prefix:aqua;
+    --genre:#ffa0cd;
+    --suffix:#a0995f;
+    --text:#f9f3d3;
+    --background:#33353c;
+    --title1:#f9f3d3;
+    --title2:#f9f3d3;
+    --hoverText:black;
+}
+#theme2{
+    --prefix:#386e03;
+    --genre:#25701a;
+    --suffix:#176f40;
+    --text:#76006e;
+    --background:#101117;
+    --title1:#a229a4;
+    --title2:#ad378e;
+    --hoverText:#0e1314;
+}
+/* #theme2{
+    --prefix:;
+    --genre:;
+    --suffix:;
+    --text:;
+    --background:;
+    --title1:;
+    --title2:;
+    --hoverText:;
+} */
+body{
+    background-color: var(--background);
+    color:var(--text);
+}
+h1{
+    font-size:4em;
+}
+h3{
+    font-size:2em;
+}
+h2,h3{
+    color:var(--title1);
+}
+#out span:hover{
+    color:var(--hoverText);
+}
+#prefix{
+    color: var(--prefix);
+}
+#genre{
+    color:var(--genre);
+}
+#suffix{
+    color:var(--suffix);
+}
+#prefix:hover{
+    background-color: var(--prefix);
+}
+#genre:hover{
+    background-color:var(--genre);
+}
+#suffix:hover{
+    background-color:var(--suffix);
+}
+
+#moreInfo{
+    width:100vw;
+}
+#info{
+    /* float:left; */
+    width:50%;
+
+}
+#summary{
+    float:right;
+    margin:0;
+    width:50%;
+}
