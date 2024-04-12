@@ -41,6 +41,10 @@ h3{
 h2,h3{
     color:var(--title1);
 }
+button{
+    scale:200%;
+    margin-left:50px;
+}
 #out span:hover{
     color:var(--hoverText);
 }
