@@ -116,7 +116,8 @@ let getFileAsArray = function(filename,mode=0){
             if(mode==1){
                 Data[filename] = JSON.parse(data);
             }else{
-                Data[filename] = data.split("\r\n");
+                Data[filename] = data.split("\n");
+                // Data[filename] = data.split("\r\n");
             }
             Data.ready++;
             if(Data.ready==0){
